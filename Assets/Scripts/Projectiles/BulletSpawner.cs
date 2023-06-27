@@ -12,7 +12,7 @@ public class BulletSpawner : Spawner
 
     protected override void LoadPrefabs()
     {
-        prefab = Resources.Load("Prefabs/Bullet") as GameObject;
+        prefab = Resources.Load("Projectiles/Bullet") as GameObject;
     }
 
     public void SpawnBullet()
@@ -23,6 +23,7 @@ public class BulletSpawner : Spawner
         Transform player = GameObject.Find("Player").transform;
         spawnPos = new Vector3(player.position.x, player.position.y + 2.45f, player.position.z);
         bullet.transform.position = spawnPos;
+        bullet.transform.rotation = (player.rotation.y > 0 ? Quaternion.Euler(-90f, 0f, 0f) : Quaternion.Euler(-90f, 0f, 180f));
         bullet.gameObject.SetActive(true);
     }
 

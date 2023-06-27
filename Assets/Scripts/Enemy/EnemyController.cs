@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviour
         SetChasePlayerToTrue();
     }
 
-    protected void Update()
+    protected void FixedUpdate()
     {       
         ChasePlayer();
         StopAttack();
@@ -31,6 +31,7 @@ public class EnemyController : MonoBehaviour
     {
         // Ignore collision
         Physics.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").transform.GetComponent<CapsuleCollider>(), transform.GetComponent<CapsuleCollider>());
+        Physics.IgnoreCollision(GameObject.FindGameObjectWithTag("Enemy").transform.GetComponent<CapsuleCollider>(), transform.GetComponent<CapsuleCollider>());
 
         // Set player target
         target = GameObject.FindGameObjectWithTag("Player").transform;
@@ -43,7 +44,7 @@ public class EnemyController : MonoBehaviour
 
         // Check if can chase player
         if (Vector3.Distance(transform.position, target.position) > canAttackDistance)
-        {
+        {   
             transform.LookAt(target);
             rigidbody.velocity = transform.forward * moveSpeed;
 
@@ -64,6 +65,12 @@ public class EnemyController : MonoBehaviour
         Vector3 direction = (target.position - transform.position).normalized;
         float atan2 = Mathf.Atan2(direction.y, direction.x);
         transform.rotation = Quaternion.Euler(0f, atan2 * Mathf.Rad2Deg + 90f, 0f);
+        
+        // Make enemy stay on the ground
+        if (rigidbody.velocity.y > 0)
+        {
+            rigidbody.AddForce(new Vector3(0f, -100f, 0f), ForceMode.Force);
+        }
     }
 
     protected void SetChasePlayerToTrue()
@@ -78,5 +85,10 @@ public class EnemyController : MonoBehaviour
         {
             attackPlayer = false;
         }
+    }
+
+    public virtual bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 0.1f);
     }
 }

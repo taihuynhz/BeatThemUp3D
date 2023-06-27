@@ -21,10 +21,10 @@ public class PlayerAnimation : MonoBehaviour
     protected bool activeTimerReset;
     protected float defaultComboTimer = 0.4f;
     protected float currentComboTimer;
-    protected float lastHP;
+    public float lastHP;
 
-    float weaponTimer = 0f;
-    float weaponDelay = 0.5f;
+    protected float weaponTimer = 0f;
+    protected float weaponDelay = 0.5f;
 
     protected AttackState currentAttackState;
 
@@ -177,7 +177,6 @@ public class PlayerAnimation : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.I) && transform.parent.GetComponent<PlayerController>().IsGrounded())
             {
                 weaponTimer = 0;
-                //transform.parent.GetComponent<PlayerController>().playerBaseballBat.GetComponent<PlayerBaseBallBat>().useTimes--;
                 transform.parent.GetComponent<PlayerController>().playerBaseballBat.SetActive(true);
                 animator.SetTrigger("SwingWeapon");
 
@@ -186,6 +185,23 @@ public class PlayerAnimation : MonoBehaviour
 
                 // Hide baseballbat after time
                 StartCoroutine(HideBaseballBatAfterTime(0.5f));
+            }
+        }
+
+        // Handle throw knife animation 
+        if (transform.parent.GetComponent<PlayerController>().knifeEquipped && transform.parent.GetComponent<PlayerController>().playerKnife.GetComponent<Weapon>().useTimes > 0)
+        {
+            if (Input.GetKeyDown(KeyCode.I) && transform.parent.GetComponent<PlayerController>().IsGrounded())
+            {
+                transform.parent.GetComponent<PlayerController>().playerKnife.GetComponent<PlayerKnife>().useTimes--;
+                transform.parent.GetComponent<PlayerController>().playerKnife.SetActive(true);
+                animator.SetTrigger("ThrowWeapon");
+
+                // Play whoosh sound
+                Audio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/Whoosh") as AudioClip);
+
+                // Hide knife after time
+                StartCoroutine(HideKnifeBatAfterTime(0.5f));
             }
         }
     }
@@ -197,7 +213,7 @@ public class PlayerAnimation : MonoBehaviour
 
     protected void HitAnimation()
     {
-        if (lastHP != transform.GetComponent<PlayerDamageReceiver>().hP)
+        if (transform.GetComponent<PlayerDamageReceiver>().hP < lastHP)
         {
             animator.SetTrigger("Hit");
             lastHP = transform.GetComponent<PlayerDamageReceiver>().hP;
@@ -213,13 +229,14 @@ public class PlayerAnimation : MonoBehaviour
         {
             animator.SetTrigger("Death");
             transform.parent.GetComponent<PlayerController>().enabled = false;
+            GetComponent<PlayerAnimation>().enabled = false;
         }
     }
 
     protected void JumpAnimation()
     {   
         // Handle jumping animation
-        if (Input.GetButtonDown("Jump") && transform.parent.GetComponent<Rigidbody>().velocity.y != 0)
+        if (Input.GetButtonDown("Jump") && transform.parent.GetComponent<PlayerController>().IsGrounded())
         {
             animator.SetTrigger("Jump");
         }
@@ -272,11 +289,9 @@ public class PlayerAnimation : MonoBehaviour
         transform.parent.GetComponent<PlayerController>().playerBaseballBat.SetActive(false);
     }
 
-    protected IEnumerator HideKnifeAfterTime(float time)
+    protected IEnumerator HideKnifeBatAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
         transform.parent.GetComponent<PlayerController>().playerKnife.SetActive(false);
     }
-
-
 }

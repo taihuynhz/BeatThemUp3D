@@ -13,20 +13,34 @@ public class PlayerDamageSender : DamageSender
         SetAnimationEvent(0.2f, 4);
         SetAnimationEvent(0.2f, 5);
 
-        SetFireGunEvent(0.1f, 6);
+        SetShootingEvent(0.1f, 6);
+        SetThrowKnifeEvent(0.2f, 7);
     }
 
-    protected void SetFireGunEvent(float time, int attackClipIndex)
+    protected void SetShootingEvent(float time, int attackClipIndex)
     {
-        AnimationEvent sendDamageEvent = new AnimationEvent();
-        sendDamageEvent.time = time;
-        sendDamageEvent.functionName = "Shooting";
-        attackClip[attackClipIndex].AddEvent(sendDamageEvent);
+        AnimationEvent shootingEvent = new AnimationEvent();
+        shootingEvent.time = time;
+        shootingEvent.functionName = "Shooting";
+        attackClip[attackClipIndex].AddEvent(shootingEvent);
+    }
+
+    protected void SetThrowKnifeEvent(float time, int attackClipIndex)
+    {
+        AnimationEvent throwKnifeEvent = new AnimationEvent();
+        throwKnifeEvent.time = time;
+        throwKnifeEvent.functionName = "ThrowKnife";
+        attackClip[attackClipIndex].AddEvent(throwKnifeEvent);
     }
 
     protected void Shooting()
     {
         MuzzleFlashFXSpawner.Instance.SpawnMuzzleFlashFX();
         BulletSpawner.Instance.SpawnBullet();
+    }
+
+    protected void ThrowKnife()
+    {
+        KnifeSpawner.Instance.SpawnKnife();
     }
 }

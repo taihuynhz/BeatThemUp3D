@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class WoodenCrate : DamageReceiver
 {
+    [SerializeField] GameObject item;
+
     protected void OnDestroy()
     {
+        if (WoodenCrateDestroyedSpawner.Instance == null) return;
         WoodenCrateDestroyedSpawner.Instance.SpawnWoodenCrateDestroyed(transform);
+        item.SetActive(true);
     }
 
     protected void Update()

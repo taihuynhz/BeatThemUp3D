@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Spawner : MonoBehaviour
 {
-    [SerializeField] protected int spawnCount = 0;
+    [SerializeField] public int spawnCount = 0;
     [SerializeField] public Transform holder;
     [SerializeField] protected GameObject prefab;
     [SerializeField] protected List<GameObject> pooledObjects = new List<GameObject>();

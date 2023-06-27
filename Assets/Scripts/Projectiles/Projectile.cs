@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerBaseBallBat : Weapon
+public class Projectile : MonoBehaviour
 {
+    [SerializeField] protected float flySpeed = 50f;
+    protected Vector3 flyDirection;
     protected Image enemyHPBarBorder;
     protected Image enemyHPBar;
 
-    protected void OnDisable()
+    protected void OnEnable()
     {
-        if (useTimes == 0)
-        {
-            // Play BaseballBatBreak sound
-            Audio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/BaseballBatBreak") as AudioClip);
-        }
+        SetFlyDirection();
     }
 
     protected void Start()
     {
+        SetFlyDirection();
         Initialize();
+    }
+    protected void Update()
+    {
+        Fly();
+        StartCoroutine(DespawnAfterTime(2));
     }
 
     protected void Initialize()
@@ -28,25 +32,33 @@ public class PlayerBaseBallBat : Weapon
         enemyHPBar = GameObject.Find("EnemyHPBar").GetComponent<Image>();
     }
 
-    protected override void HideWeapon()
+    protected void Fly()
     {
-        if (useTimes <= 0)
-        {
-            useTimes = 0;
-            player.GetComponent<PlayerController>().weaponEquipped = false;
-            player.GetComponent<PlayerController>().baseballBatEquipped = false;
-        }
+        transform.Translate(flyDirection * flySpeed * Time.deltaTime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void SetFlyDirection()
+    {
+        if (GameObject.Find("Player").transform.rotation.y > 0 )
+        {
+            flyDirection = transform.right;
+        }
+        else
+        {
+            flyDirection = -transform.right;
+        }
+
+    }
+
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 7)
         {
-            useTimes--;
-            other.transform.GetComponentInChildren<DamageReceiver>().HPDeduct(5);
+            other.transform.GetComponentInChildren<DamageReceiver>().HPDeduct(4);
+            BulletSpawner.Instance.Despawn(transform);
 
-            // Play BaseballBatHit sound
-            Audio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/BaseballBatHit") as AudioClip);
+            // Play BulletHit sound
+            Audio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/BulletHit") as AudioClip);
 
             // Show enemy UI
             ShowEnemyUI();
@@ -82,5 +94,11 @@ public class PlayerBaseBallBat : Weapon
     {
         yield return new WaitForSeconds(time);
         HideEnemyUI();
+    }
+
+    protected virtual IEnumerator DespawnAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        BulletSpawner.Instance.Despawn(transform);
     }
 }

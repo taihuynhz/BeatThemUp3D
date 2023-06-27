@@ -14,7 +14,7 @@ public class EnemyAnimation : MonoBehaviour
     protected float chasePlayerAfterAttack = 1f;
     protected float lastHP;
 
-    //protected float standUpTimer = 2f;
+    protected float standUpTimer = 2f;
 
     protected void Awake()
     {
@@ -125,17 +125,33 @@ public class EnemyAnimation : MonoBehaviour
         }
     }
 
-    //protected void KnockDownAnimation()
-    //{
-    //    if (EnemyDamageReceiver.Instance.isDead)
-    //    {
-    //        animator.SetTrigger("KnockDown");
-    //        transform.GetComponent<EnemyController>().enabled = false;
-    //        Destroy(gameObject, 2f);
-    //    }
-    //}
+    public void KnockDownAnimation()
+    {
+        animator.SetTrigger("KnockDown");
+        transform.parent.GetComponent<EnemyController>().enabled = false;
+    }
 
-    //protected void StandUpAnimation ()
+    protected void EnableEnemyController()
+    {
+        transform.parent.GetComponent<EnemyController>().enabled = true;
+    }
+
+    protected void SetLayerToDefault()
+    {
+        transform.parent.gameObject.layer = 0;
+    }
+
+    protected void SetLayerToEnemy()
+    {
+        transform.parent.gameObject.layer = 7;
+    }
+
+    protected void DeathSound()
+    {
+        OnUpdateAudio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/EnemyDeath") as AudioClip);
+    }
+
+    //protected void StandUpAnimation()
     //{
     //    StartCoroutine("StandUpAfterTime");
     //}

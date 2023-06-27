@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -57,6 +56,7 @@ public class PlayerController : MonoBehaviour
             transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Kick2") ||
             transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("FireGun") ||
             transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("SwingWeapon") ||
+            transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("ThrowWeapon") || 
             transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("PickUp") ||
             transform.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Land"))
         {
@@ -83,25 +83,32 @@ public class PlayerController : MonoBehaviour
 
     protected void Jumping()
     {
-        // Apply jump for the character
+        // Apply jump for the Player
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpVelocity, rigidbody.velocity.z);
 
-            // Play player jump sound
+            // Play Player jump sound
             Audio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/PlayerJump") as AudioClip);
         }
 
+        // Make Player fall faster when in the air
+        if (rigidbody.velocity.y < 0)
+        {
+            rigidbody.AddForce(new Vector3(0f, -60f, 0f), ForceMode.Force);
+        }
     }
 
     protected void CheckRun()
     {
+        // If Player is running, apply runSpeed 
         if (transform.GetComponentInChildren<Animator>().GetBool("Run") == true)
         {
             isRunning = true;
             moveSpeed = runSpeed;
         }
 
+        // If Player isn't running, apply walkSpeed 
         if (transform.GetComponentInChildren<Animator>().GetBool("Run") == false)
         {
             isRunning = false;
@@ -110,12 +117,14 @@ public class PlayerController : MonoBehaviour
     }
 
     public virtual bool IsGrounded()
-    {
+    {   
+        // Check if Player is on the ground or not
         return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 0.1f);
     }
 
     protected AudioClip RandomFootstepSound(int hit)
     {
+        // Automatic choose random footstep sound
         switch (hit)
         {
             case 0: return Resources.Load("Audio/Footstep1") as AudioClip;
