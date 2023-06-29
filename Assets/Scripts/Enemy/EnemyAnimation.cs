@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyAnimation : MonoBehaviour
@@ -128,7 +129,7 @@ public class EnemyAnimation : MonoBehaviour
     public void KnockDownAnimation()
     {
         animator.SetTrigger("KnockDown");
-        transform.parent.GetComponent<EnemyController>().enabled = false;
+        transform.parent.GetComponent<EnemyController>().enabled = false; 
     }
 
     protected void EnableEnemyController()

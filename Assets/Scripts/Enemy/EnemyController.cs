@@ -23,18 +23,23 @@ public class EnemyController : MonoBehaviour
 
     protected void FixedUpdate()
     {       
+        IgnoreCollision();
         ChasePlayer();
         StopAttack();
     }
 
     protected void Initialize()
     {
+        // Set player target
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+
+    protected void IgnoreCollision()
+    {
         // Ignore collision
         Physics.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").transform.GetComponent<CapsuleCollider>(), transform.GetComponent<CapsuleCollider>());
         Physics.IgnoreCollision(GameObject.FindGameObjectWithTag("Enemy").transform.GetComponent<CapsuleCollider>(), transform.GetComponent<CapsuleCollider>());
-
-        // Set player target
-        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     protected void ChasePlayer()

@@ -6,7 +6,7 @@ public class WoodenCrateDestroyed : MonoBehaviour
 {
     protected void Update()
     {
-        StartCoroutine(DespawnAfterTime(3));
+        StartCoroutine(DespawnAfterTime(2));
     }
 
     protected IEnumerator DespawnAfterTime(float time)

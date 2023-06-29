@@ -278,6 +278,11 @@ public class PlayerAnimation : MonoBehaviour
         }
     }
 
+    protected void DeathSound()
+    {
+        OnUpdateAudio.Instance.AudioSource.PlayOneShot(Resources.Load("Audio/PlayerDeath") as AudioClip);
+    }
+
     protected IEnumerator HideGunAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
